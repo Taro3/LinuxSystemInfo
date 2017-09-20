@@ -6,9 +6,12 @@ ApplicationWindow {
     id: root
     visible: true
     width: column.x + column.width
+    minimumWidth: column.x + column.width
+    maximumWidth: column.x + column.width
     height: column.y + column.height
+    minimumHeight: column.y + column.height
+    maximumHeight: column.y + column.height
     title: qsTr("CPU Load")
-    flags: Qt.FramelessWindowHint
 
     Timer {
         interval: 1000
@@ -66,22 +69,22 @@ ApplicationWindow {
         id: mouseArea
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        property point dragOffset: "0, 0"
+//        property point dragOffset: "0, 0"
         property int pressButton: 0
 
         onPressed: {
             pressButton = pressedButtons
-            if (pressedButtons & Qt.LeftButton)
-                dragOffset = Qt.point(mouseX, mouseY)
+//            if (pressedButtons & Qt.LeftButton)
+//                dragOffset = Qt.point(mouseX, mouseY)
         }
 
-        onPositionChanged: {
-            if (pressedButtons & Qt.LeftButton) {
-                var pos = mapToGlobal(mouseX, mouseY)
-                root.x = pos.x - dragOffset.x
-                root.y = pos.y - dragOffset.y
-            }
-        }
+//        onPositionChanged: {
+//            if (pressedButtons & Qt.LeftButton) {
+//                var pos = mapToGlobal(mouseX, mouseY)
+//                root.x = pos.x - dragOffset.x
+//                root.y = pos.y - dragOffset.y
+//            }
+//        }
 
         onDoubleClicked: {
             if (pressedButtons & Qt.LeftButton)
@@ -89,7 +92,6 @@ ApplicationWindow {
         }
 
         onClicked: {
-            console.log(pressedButtons)
             if (pressButton & Qt.RightButton) {
                 menu.x = mouseX; menu.y = mouseY
                 menu.open()
