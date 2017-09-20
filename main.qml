@@ -36,7 +36,7 @@ ApplicationWindow {
                 Text {
                     width: 64
                     anchors.verticalCenter: parent.verticalCenter
-                    text: index == 0 ? "Average: " : "CPU" + index + ": "
+                    text: index == 0 ? "Overall: " : "CPU" + index + ": "
                 }
 
                 LoadBox {
