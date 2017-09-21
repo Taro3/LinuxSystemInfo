@@ -81,6 +81,35 @@ int OsProc::cpuInfoProcessorCount()
     return nProcessorCount;
 }
 
+QStringList OsProc::loadStatFile()
+{
+    const static QString FILE_PATH = PROC_PATH + STAT_FILE_NAME;
+    QStringList lstLoad;
+
+    if (!m_pcFileStat) {
+        m_pcFileStat = new QFile(FILE_PATH);
+    }
+    if (!m_pcFileStat->exists()) {
+        qDebug() << FILE_PATH + " not found.";
+        return lstLoad;
+    }
+    if (!m_pcFileStat->isOpen()) {
+        if (!m_pcFileStat->open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << FILE_PATH + " can't open.";
+            return lstLoad;
+        }
+    }
+    m_pcFileStat->seek(0);
+
+    char szLineBuffer[1024];
+    while (m_pcFileStat->readLine(szLineBuffer, sizeof(szLineBuffer)) != -1) {
+        lstLoad.append(szLineBuffer);
+    }
+    m_pcFileStat->close();
+
+    return lstLoad;
+}
+
 //=====================================================================================================================
 /**
  * @brief       OsProc::statCpu

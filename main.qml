@@ -18,12 +18,13 @@ ApplicationWindow {
         running: true
         repeat: true
         onTriggered: {
-            var loads = cpuLoad.cpuLoad()
-            console.log(loads)
-            for (var i = 0; i < cpuLoad.cpuCount() + 1; ++i) {
-                var box = repeaterCpuLoad.itemAt(i).children[1]
-                box.value = Math.round(loads[i])
-            }
+            cpuLoad.startGetCpuLoad()
+//            var loads = cpuLoad.cpuLoad()
+//            console.log(loads)
+//            for (var i = 0; i < cpuLoad.cpuCount() + 1; ++i) {
+//                var box = repeaterCpuLoad.itemAt(i).children[1]
+//                box.value = Math.round(loads[i])
+//            }
         }
     }
 

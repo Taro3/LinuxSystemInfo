@@ -1,8 +1,11 @@
 #include <QDebug>
 #include <sys/times.h>
+#include <QThread>
 
 #include "cpuload.h"
 #include "osproc.h"
+#include "loaddata.h"
+#include "loadgetthread.h"
 
 //=====================================================================================================================
 /**
@@ -13,6 +16,7 @@
  */
 CpuLoad::CpuLoad(QObject *parent) : QObject(parent)
   , m_pcOsProc(nullptr)
+  , m_pcLoadData(nullptr)
   , m_nProcessorCount(0)
   , m_isReady(false)
 {
@@ -32,6 +36,7 @@ bool CpuLoad::initialize()
         return true;
     }
 
+    m_pcLoadData = new LoadData(this);
     m_pcOsProc = new OsProc(this);
     m_nProcessorCount = m_pcOsProc->cpuInfoProcessorCount();
 
@@ -41,6 +46,16 @@ bool CpuLoad::initialize()
         return false;
     }
 
+    for (int i = 0; i < m_nProcessorCount + 1; ++i) {
+        LoadGetThread *pGetThread = new LoadGetThread(m_pcLoadData, i);
+        m_lstGetThread.append(pGetThread);
+        connect(pGetThread, SIGNAL(finished(int,qreal)), SLOT(getLoadFinished(int,qreal)));
+//        QThread *pThread = new QThread(this);
+        pGetThread->moveToThread(pGetThread->thread());
+//        m_lstSubThread.append(pThread);
+    }
+
+#if 0
     QList<QList<quint64> > initLoads = m_pcOsProc->statCpus();
     clock_t now = ::times(nullptr);
 
@@ -50,6 +65,7 @@ bool CpuLoad::initialize()
         sIat.prevClock = now;
         m_vecCpuInfo.append(sIat);
     }
+#endif
 
     m_isReady = true;
 
@@ -93,4 +109,20 @@ QList<qreal> CpuLoad::cpuLoad()
     }
 
     return allLoads;
+}
+
+void CpuLoad::startGetCpuLoad()
+{
+    QStringList lstLoadFile = m_pcOsProc->loadStatFile();
+    m_pcLoadData->setLoadData(lstLoadFile);
+    for (int i = 0; i < m_lstGetThread.count(); ++i) {
+        if (QMetaObject::invokeMethod(m_lstGetThread.at(i), "doWork") == false) {
+            qDebug() << "invokeMethod failed.";
+        }
+    }
+}
+
+void CpuLoad::getLoadFinished(const int nCpuIndex, qreal load)
+{
+    qDebug() << QString("***** CPU") + QString::number(nCpuIndex) + " Load " + QString::number(load);
 }

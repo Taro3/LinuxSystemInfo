@@ -16,10 +16,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp \
     cpuload.cpp \
-    osproc.cpp
+    osproc.cpp \
+    loaddata.cpp \
+    loadgetthread.cpp
 
 HEADERS += cpuload.h \
-    osproc.h
+    osproc.h \
+    loaddata.h \
+    loadgetthread.h
 
 RESOURCES += qml.qrc
 

@@ -13,6 +13,7 @@ public:
     explicit OsProc(QObject *parent);
     virtual ~OsProc();
     int cpuInfoProcessorCount();
+    QStringList loadStatFile();
     QList<quint64> statCpu(int nIndex);
     QList<QList<quint64> > statCpus();
 

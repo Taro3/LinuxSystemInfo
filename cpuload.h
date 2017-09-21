@@ -5,6 +5,8 @@
 #include <QVector>
 
 class OsProc;
+class LoadData;
+class LoadGetThread;
 
 /**
  * @brief   The CpuLoad class
@@ -39,21 +41,26 @@ public:
     {
         return m_isReady;
     }
+    Q_INVOKABLE void startGetCpuLoad();
 
 signals:
 
 public slots:
+    void getLoadFinished(const int nCpuIndex, qreal load);
 
 private:
     typedef struct {
-        clock_t         prevClock;      //!< 前回取得時刻
-        QList<quint64>  lstInfo;        //!< 取得CPU時間
+        clock_t         prevClock;              //!< 前回取得時刻
+        QList<quint64>  lstInfo;                //!< 取得CPU時間
     } sInfoAndTime;
 
-    OsProc  *m_pcOsProc;                    //!< OsProcオブジェクト
-    int     m_nProcessorCount;              //!< 論理CPU数
-    bool    m_isReady;                      //!< 初期化完了フラグ
-    QVector<sInfoAndTime> m_vecCpuInfo;     //!< CPU情報
+    OsProc      *m_pcOsProc;                    //!< OsProcオブジェクト
+    LoadData    *m_pcLoadData;
+    int         m_nProcessorCount;              //!< 論理CPU数
+    bool        m_isReady;                      //!< 初期化完了フラグ
+    QList<LoadGetThread*>   m_lstGetThread;
+//    QList<QThrad*>          m_lstSubThread;
+    QVector<sInfoAndTime> m_vecCpuInfo;         //!< CPU情報
 };
 
 #endif // CPULOAD_H
