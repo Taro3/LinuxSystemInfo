@@ -18,6 +18,7 @@ class CpuLoad : public QObject
 
 public:
     explicit CpuLoad(QObject *parent = nullptr);
+    virtual ~CpuLoad();
     bool initialize();
     Q_INVOKABLE QList<qreal> cpuLoad();
     /**
@@ -44,9 +45,10 @@ public:
     Q_INVOKABLE void startGetCpuLoad();
 
 signals:
+    void loadUpdated(const int nIndex, const qreal nLoad);
 
 public slots:
-    void getLoadFinished(const int nCpuIndex, qreal load);
+    void getLoadFinished(const int nCpuIndex, const qreal load);
 
 private:
     typedef struct {
@@ -59,7 +61,6 @@ private:
     int         m_nProcessorCount;              //!< 論理CPU数
     bool        m_isReady;                      //!< 初期化完了フラグ
     QList<LoadGetThread*>   m_lstGetThread;
-//    QList<QThrad*>          m_lstSubThread;
     QVector<sInfoAndTime> m_vecCpuInfo;         //!< CPU情報
 };
 

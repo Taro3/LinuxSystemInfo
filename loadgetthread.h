@@ -2,6 +2,7 @@
 #define LOADGETTHREAD_H
 
 #include <QObject>
+#include <QThread>
 
 class LoadData;
 
@@ -14,6 +15,10 @@ class LoadGetThread : public QObject
     Q_OBJECT
 public:
     explicit LoadGetThread(LoadData * const pLoadData, const int nCpuId, QObject *parent = nullptr);
+    void quit() {
+        thread()->exit();
+        thread()->wait();
+    }
 
 signals:
     void finished(const int nCpuIndex, qreal nLoad);

@@ -12,8 +12,18 @@ ApplicationWindow {
     minimumHeight: column.y + column.height
     maximumHeight: column.y + column.height
     title: qsTr("CPU Load")
+    onClosing: timer.stop
+
+    Connections {
+        target: cpuLoad
+        onLoadUpdated: {
+            var box = repeaterCpuLoad.itemAt(nIndex).children[1]
+            box.value = Math.round(nLoad)
+        }
+    }
 
     Timer {
+        id: timer
         interval: 1000
         running: true
         repeat: true

@@ -22,6 +22,19 @@ CpuLoad::CpuLoad(QObject *parent) : QObject(parent)
 {
 }
 
+CpuLoad::~CpuLoad()
+{
+    for (int i = 0; i < m_lstGetThread.count(); ++i) {
+        m_lstGetThread.at(i)->quit();
+        delete m_lstGetThread.at(i);
+        m_lstGetThread.replace(i, nullptr);
+    }
+    delete m_pcLoadData;
+    m_pcLoadData = nullptr;
+    delete m_pcOsProc;
+    m_pcOsProc = nullptr;
+}
+
 //=====================================================================================================================
 /**
  * @brief   CpuLoad::initialize
@@ -50,8 +63,9 @@ bool CpuLoad::initialize()
         LoadGetThread *pGetThread = new LoadGetThread(m_pcLoadData, i);
         m_lstGetThread.append(pGetThread);
         connect(pGetThread, SIGNAL(finished(int,qreal)), SLOT(getLoadFinished(int,qreal)));
-//        QThread *pThread = new QThread(this);
-        pGetThread->moveToThread(pGetThread->thread());
+        QThread *pThread = new QThread(this);
+        pGetThread->moveToThread(pThread);
+        pThread->start();
 //        m_lstSubThread.append(pThread);
     }
 
@@ -122,7 +136,7 @@ void CpuLoad::startGetCpuLoad()
     }
 }
 
-void CpuLoad::getLoadFinished(const int nCpuIndex, qreal load)
+void CpuLoad::getLoadFinished(const int nCpuIndex, const qreal load)
 {
-    qDebug() << QString("***** CPU") + QString::number(nCpuIndex) + " Load " + QString::number(load);
+    emit loadUpdated(nCpuIndex, load);
 }
