@@ -55,7 +55,6 @@ void LoadGetThread::doWork(quint64 nInterval)
 
         if (lstToken.length() >= 4)
         {
-            qDebug() << "CPU Name: " + lstToken[0];
             quint64 nNowLoad = lstToken[1].toULongLong() + lstToken[2].toULongLong() + lstToken[3].toULongLong();
 
             if (nInterval != 0)
