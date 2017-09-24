@@ -1,25 +1,48 @@
-#include <QMutexLocker>
+#include <QReadWriteLock>
+#include <QReadLocker>
+#include <QWriteLocker>
 
 #include "loaddata.h"
 
-LoadData::LoadData(QObject *parent) : QObject(parent)
+//=====================================================================================================================
+/**
+ * @brief       LoadData::LoadData
+ *              コンストラクタ
+ * @param[in]   parent  親オブジェクトポインタ
+ * @return      なし
+ */
+LoadData::LoadData(QObject *parent)
+    : QObject(parent)
+    , m_pcLock(nullptr)
+    , m_plstLoadData(nullptr)
 {
-
+    m_pcLock = new QReadWriteLock;
+    m_plstLoadData = new QStringList;
 }
 
-void LoadData::setLoadData(QStringList &lst)
+//=====================================================================================================================
+/**
+ * @brief   LoadData::~LoadData
+ *          デストラクタ
+ */
+LoadData::~LoadData()
 {
-    QMutexLocker locker(&m_cMutex);
-
-    m_lstLoadData = lst;
+    delete m_pcLock;
+    m_pcLock = nullptr;
+    delete m_plstLoadData;
+    m_plstLoadData = nullptr;
 }
 
-void LoadData::lock()
+//=====================================================================================================================
+/**
+ * @brief       LoadData::setLoadData
+ *              負荷率データテキスト設定
+ * @param[in]   lst 負荷率データテキスト
+ * @return      なし
+ */
+void LoadData::setLoadData(const QStringList &lst)
 {
-    m_cMutex.lock();
-}
+    QWriteLocker wLock(m_pcLock);
 
-void LoadData::unlock()
-{
-    m_cMutex.unlock();
+    *m_plstLoadData = lst;
 }

@@ -2,8 +2,10 @@
 #define LOADDATA_H
 
 #include <QObject>
-#include <QMutex>
+#include <QReadWriteLock>
+#include <QReadLocker>
 
+//=====================================================================================================================
 /**
  * @brief   The LoadData class
  *          CPU負荷率データ保持クラス
@@ -14,12 +16,18 @@ class LoadData : public QObject
     Q_OBJECT
 public:
     explicit LoadData(QObject *parent = nullptr);
-    void setLoadData(QStringList &lst);
-    void lock();
-    void unlock();
+    ~LoadData();
+    void setLoadData(const QStringList &lst);
+    //=================================================================================================================
+    /**
+     * @brief   loadData
+     *          負荷率データテキスト取得
+     * @return  負荷率データテキスト
+     */
     inline QStringList loadData() const
     {
-        return m_lstLoadData;
+        QReadLocker lock(m_pcLock);
+        return *m_plstLoadData;
     }
 
 signals:
@@ -27,8 +35,8 @@ signals:
 public slots:
 
 private:
-    QMutex  m_cMutex;
-    QStringList m_lstLoadData;
+    QReadWriteLock  *m_pcLock;          //!< 排他処理用ミューテックス
+    QStringList     *m_plstLoadData;    //!< 負荷率データテキスト
 };
 
 #endif // LOADDATA_H

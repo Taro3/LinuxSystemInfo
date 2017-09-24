@@ -31,10 +31,9 @@ OsProc::~OsProc()
     // オブジェクト破棄
     if (m_pcFileCpuInfo != nullptr) m_pcFileCpuInfo->close();
     if (m_pcFileStat != nullptr)    m_pcFileStat->close();
-    delete m_pcFileCpuInfo;
-    m_pcFileCpuInfo = nullptr;
-    delete m_pcFileStat;
-    m_pcFileStat = nullptr;
+
+    delete m_pcFileCpuInfo; m_pcFileCpuInfo = nullptr;
+    delete m_pcFileStat;    m_pcFileStat = nullptr;
 }
 
 //=====================================================================================================================
@@ -49,18 +48,24 @@ int OsProc::cpuInfoProcessorCount()
     const static QString STR_PROCESSOR = "processor";
     const static QString FILE_PATH = PROC_PATH + CPUINFO_FILE_NAME;
 
-    if (!m_pcFileCpuInfo) {
+    if (!m_pcFileCpuInfo)
+    {
         m_pcFileCpuInfo = new QFile(FILE_PATH);
 
-        if (!m_pcFileCpuInfo->exists()) {
+        if (!m_pcFileCpuInfo->exists())
+        {
             qDebug() << FILE_PATH + " not found.";
+
             return 0;
         }
     }
 
-    if (!m_pcFileCpuInfo->isOpen()) {
-        if (!m_pcFileCpuInfo->open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!m_pcFileCpuInfo->isOpen())
+    {
+        if (!m_pcFileCpuInfo->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
             qDebug() << FILE_PATH + " can't open.";
+
             return 0;
         }
     }
@@ -70,8 +75,10 @@ int OsProc::cpuInfoProcessorCount()
     int nProcessorCount = 0;
     static char szLine[1024];
 
-    while (m_pcFileCpuInfo->readLine(szLine, sizeof(szLine))  != -1) {
-        if (QString(szLine).indexOf(QRegExp(STR_PROCESSOR , Qt::CaseInsensitive)) == 0) {
+    while (m_pcFileCpuInfo->readLine(szLine, sizeof(szLine))  != -1)
+    {
+        if (QString(szLine).indexOf(QRegExp(STR_PROCESSOR , Qt::CaseInsensitive)) == 0)
+        {
             ++nProcessorCount;
         }
     }
@@ -81,30 +88,47 @@ int OsProc::cpuInfoProcessorCount()
     return nProcessorCount;
 }
 
+//=====================================================================================================================
+/**
+ * @brief   OsProc::loadStatFile
+ *          負荷率データテキスト取得処理
+ * @return  負荷率データテキスト
+ */
 QStringList OsProc::loadStatFile()
 {
     const static QString FILE_PATH = PROC_PATH + STAT_FILE_NAME;
     QStringList lstLoad;
 
-    if (!m_pcFileStat) {
+    if (!m_pcFileStat)
+    {
         m_pcFileStat = new QFile(FILE_PATH);
     }
-    if (!m_pcFileStat->exists()) {
+
+    if (!m_pcFileStat->exists())
+    {
         qDebug() << FILE_PATH + " not found.";
+
         return lstLoad;
     }
-    if (!m_pcFileStat->isOpen()) {
-        if (!m_pcFileStat->open(QIODevice::ReadOnly | QIODevice::Text)) {
+
+    if (!m_pcFileStat->isOpen())
+    {
+        if (!m_pcFileStat->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
             qDebug() << FILE_PATH + " can't open.";
+
             return lstLoad;
         }
     }
-    m_pcFileStat->seek(0);
 
+    m_pcFileStat->seek(0);
     char szLineBuffer[1024];
-    while (m_pcFileStat->readLine(szLineBuffer, sizeof(szLineBuffer)) != -1) {
+
+    while (m_pcFileStat->readLine(szLineBuffer, sizeof(szLineBuffer)) != -1)
+    {
         lstLoad.append(szLineBuffer);
     }
+
     m_pcFileStat->close();
 
     return lstLoad;
@@ -127,37 +151,50 @@ QList<quint64> OsProc::statCpu(int nIndex)
 
     QList<quint64> cpuStat;
 
-    if (!m_pcFileStat) {
+    if (!m_pcFileStat)
+    {
         m_pcFileStat = new QFile(FILE_PATH);
 
-        if (!m_pcFileStat->exists()) {
+        if (!m_pcFileStat->exists())
+        {
             qDebug() << FILE_PATH + " not found.";
+
             return cpuStat;
         }
     }
 
-    if (!m_pcFileStat->isOpen()) {
-        if (!m_pcFileStat->open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!m_pcFileStat->isOpen())
+    {
+        if (!m_pcFileStat->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
             qDebug() << FILE_PATH + " can't open.";
+
             return cpuStat;
         }
     }
 
     m_pcFileStat->seek(0);
-
     QString strCpuName = "^" + STR_CPU;
+
     if (nIndex >= 0)
+    {
         strCpuName += QString::number(nIndex);
+    }
+
     strCpuName += "\\s";
 
     static char szLine[1024];
-    while (m_pcFileStat->readLine(szLine, sizeof(szLine)) != -1) {
-        if (QString(szLine).indexOf(QRegExp(strCpuName, Qt::CaseInsensitive)) == 0) {
+
+    while (m_pcFileStat->readLine(szLine, sizeof(szLine)) != -1)
+    {
+        if (QString(szLine).indexOf(QRegExp(strCpuName, Qt::CaseInsensitive)) == 0)
+        {
             QTextStream stream(szLine);
             QString strData;
             stream >> strData;
 
-            while (!strData.isEmpty()) {
+            while (!strData.isEmpty())
+            {
                 stream >> strData;
                 cpuStat << strData.toULongLong();
             }
@@ -183,18 +220,24 @@ QList<QList<quint64> > OsProc::statCpus()
 
     QList<QList<quint64>> cpuStats;
 
-    if (!m_pcFileStat) {
+    if (!m_pcFileStat)
+    {
         m_pcFileStat = new QFile(FILE_PATH);
 
-        if (!m_pcFileStat->exists()) {
+        if (!m_pcFileStat->exists())
+        {
             qDebug() << FILE_PATH + " not found.";
+
             return cpuStats;
         }
     }
 
-    if (!m_pcFileStat->isOpen()) {
-        if (!m_pcFileStat->open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!m_pcFileStat->isOpen())
+    {
+        if (!m_pcFileStat->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
             qDebug() << FILE_PATH + " can't open.";
+
             return cpuStats;
         }
     }
@@ -204,29 +247,35 @@ QList<QList<quint64> > OsProc::statCpus()
     static char szLine[1024];
     int index = 0;
     int cpuNo = cpuInfoProcessorCount();
-    while (m_pcFileStat->readLine(szLine, sizeof(szLine)) != -1) {
+
+    while (m_pcFileStat->readLine(szLine, sizeof(szLine)) != -1)
+    {
         QString strCpuName = "^" + STR_CPU;
 
-        if (index > 0) {
+        if (index > 0)
+        {
             strCpuName += QString::number(index - 1);
         }
 
         strCpuName += "\\s";
 
-        if (QString(szLine).indexOf(QRegExp(strCpuName, Qt::CaseInsensitive)) == 0) {
+        if (QString(szLine).indexOf(QRegExp(strCpuName, Qt::CaseInsensitive)) == 0)
+        {
             QTextStream stream(szLine);
             QString strData;
             stream >> strData;              // CPU名読み飛ばし
             QList<quint64> load;
 
-            while (!strData.isEmpty()) {
+            while (!strData.isEmpty())
+            {
                 stream >> strData;
                 load << strData.toULongLong();
             }
 
             cpuStats << load;
 
-            if (++index == cpuNo + 1) {
+            if (++index == cpuNo + 1)
+            {
                 break;
             }
         }

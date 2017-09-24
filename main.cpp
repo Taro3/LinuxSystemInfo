@@ -5,6 +5,14 @@
 
 #include "cpuload.h"
 
+//=====================================================================================================================
+/**
+ * @brief       main
+ *              アプリケーションメイン関数
+ * @param[in]   argc    引数数
+ * @param[in]   argv    引数文字列
+ * @return      アプリケーション終了ステータス
+ */
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -15,6 +23,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("cpuLoad", &cpuLoad);
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
+
     if (engine.rootObjects().isEmpty())
         return -1;
 

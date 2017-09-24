@@ -29,12 +29,6 @@ ApplicationWindow {
         repeat: true
         onTriggered: {
             cpuLoad.startGetCpuLoad()
-//            var loads = cpuLoad.cpuLoad()
-//            console.log(loads)
-//            for (var i = 0; i < cpuLoad.cpuCount() + 1; ++i) {
-//                var box = repeaterCpuLoad.itemAt(i).children[1]
-//                box.value = Math.round(loads[i])
-//            }
         }
     }
 
@@ -80,22 +74,11 @@ ApplicationWindow {
         id: mouseArea
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-//        property point dragOffset: "0, 0"
         property int pressButton: 0
 
         onPressed: {
             pressButton = pressedButtons
-//            if (pressedButtons & Qt.LeftButton)
-//                dragOffset = Qt.point(mouseX, mouseY)
         }
-
-//        onPositionChanged: {
-//            if (pressedButtons & Qt.LeftButton) {
-//                var pos = mapToGlobal(mouseX, mouseY)
-//                root.x = pos.x - dragOffset.x
-//                root.y = pos.y - dragOffset.y
-//            }
-//        }
 
         onDoubleClicked: {
             if (pressedButtons & Qt.LeftButton)
