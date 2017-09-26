@@ -18,6 +18,8 @@ const QString OsProc::STAT_FILE_NAME    = "stat";
 OsProc::OsProc() : QObject()
   , m_pcFileCpuInfo(nullptr)
   , m_pcFileStat(nullptr)
+  , m_nCpuLogicalCount(0)
+  , m_nCpuCoreCount(0)
 {
 }
 
@@ -61,6 +63,60 @@ int OsProc::cpuInfoProcessorCount()
     const static QString STR_PROCESSOR = "processor";
     const static QString FILE_PATH = PROC_PATH + CPUINFO_FILE_NAME;
 
+    if (m_nCpuLogicalCount != 0) {
+        return m_nCpuLogicalCount;
+    }
+
+    if (!m_pcFileCpuInfo)
+    {
+        m_pcFileCpuInfo = new QFile(FILE_PATH);
+
+        if (!m_pcFileCpuInfo->exists())
+        {
+            qDebug() << FILE_PATH + " not found.";
+
+            return 0;
+        }
+    }
+
+    if (!m_pcFileCpuInfo->isOpen())
+    {
+        if (!m_pcFileCpuInfo->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            qDebug() << FILE_PATH + " can't open.";
+
+            return 0;
+        }
+    }
+
+    m_nCpuLogicalCount = 0;
+    m_pcFileCpuInfo->seek(0);
+
+    static char szLine[1024];
+
+    while (m_pcFileCpuInfo->readLine(szLine, sizeof(szLine))  != -1)
+    {
+        if (QString(szLine).indexOf(QRegExp(STR_PROCESSOR , Qt::CaseInsensitive)) == 0)
+        {
+            ++m_nCpuLogicalCount;
+        }
+    }
+
+    m_pcFileCpuInfo->close();
+
+    return m_nCpuLogicalCount;
+}
+
+//=====================================================================================================================
+int OsProc::cpuInfoCoreCount()
+{
+    const static QString STR_CPU_CORES = "^cpu\\scores\\s:";
+    const static QString FILE_PATH = PROC_PATH + CPUINFO_FILE_NAME;
+
+    if (m_nCpuCoreCount != 0) {
+        return m_nCpuCoreCount;
+    }
+
     if (!m_pcFileCpuInfo)
     {
         m_pcFileCpuInfo = new QFile(FILE_PATH);
@@ -85,20 +141,26 @@ int OsProc::cpuInfoProcessorCount()
 
     m_pcFileCpuInfo->seek(0);
 
-    int nProcessorCount = 0;
     static char szLine[1024];
 
     while (m_pcFileCpuInfo->readLine(szLine, sizeof(szLine))  != -1)
     {
-        if (QString(szLine).indexOf(QRegExp(STR_PROCESSOR , Qt::CaseInsensitive)) == 0)
+        if (QString(szLine).indexOf(QRegExp(STR_CPU_CORES, Qt::CaseInsensitive)) == 0)
         {
-            ++nProcessorCount;
+            QStringList lst = QString(szLine).split(':');
+            if (lst.count() < 2) {
+                qDebug() << "Core count data failed.";
+            } else {
+                QString strCoreCount = lst[1].trimmed();
+                m_nCpuCoreCount = strCoreCount.toInt();
+            }
+            break;
         }
     }
 
     m_pcFileCpuInfo->close();
 
-    return nProcessorCount;
+    return m_nCpuCoreCount;
 }
 
 //=====================================================================================================================

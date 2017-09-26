@@ -5,13 +5,13 @@ import QtQuick.Layouts 1.3
 ApplicationWindow {
     id: root
     visible: true
-    width: column.x + column.width
-    minimumWidth: column.x + column.width
-    maximumWidth: column.x + column.width
-    height: column.y + column.height
-    minimumHeight: column.y + column.height
-    maximumHeight: column.y + column.height
-    title: qsTr("CPU Load")
+    width: row.x + row.width
+    minimumWidth: row.x + row.width
+    maximumWidth: row.x + row.width
+    height: row.y + row.height
+    minimumHeight: row.y + row.height
+    maximumHeight: row.y + row.height
+    title: qsTr("Sys Info")
     onClosing: timer.stop
 
     Connections {
@@ -22,6 +22,15 @@ ApplicationWindow {
         }
     }
 
+    Connections {
+        target: cpuTemperature
+        onTemperatureUpdated: {
+            var box = repeaterCpuTemerate.itemAt(nCpuIndex).children[1]
+            box.value = nTemperature / 1000
+        }
+    }
+
+
     Timer {
         id: timer
         interval: 1000
@@ -29,25 +38,60 @@ ApplicationWindow {
         repeat: true
         onTriggered: {
             cpuLoad.startGetCpuLoad()
+            cpuTemperature.startGetCpuTemperature()
         }
     }
 
-    Column {
-        id: column
+    Row {
+        id: row
         spacing: 2
 
-        Repeater {
-            id: repeaterCpuLoad
-            objectName: "cpuLoadCpu"
+        Column {
+            id: columnCpuLoad
+            spacing: 2
 
-            Row {
-                Text {
-                    width: 64
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: index == 0 ? "Overall: " : "CPU" + index + ": "
+            Text {
+                text: qsTr("CPU Load")
+            }
+
+            Repeater {
+                id: repeaterCpuLoad
+                objectName: "cpuLoadCpu"
+
+                Row {
+                    Text {
+                        width: 64
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: index == 0 ? qsTr("Overall: ") : qsTr("CPU") + (index - 1) + qsTr(": ")
+                    }
+
+                    LoadBox {
+                    }
                 }
+            }
+        }
 
-                LoadBox {
+        Column {
+            id: columnCpuTemperature
+            spacing: 2
+
+            Text {
+                text: qsTr("CPU Temperature")
+            }
+
+            Repeater {
+                id: repeaterCpuTemerate
+                objectName: "cpuTemperatureCpu"
+
+                Row {
+                    Text {
+                        width: 64
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Core") + index + qsTr(": ")
+                    }
+
+                    TemperatureBox {
+                    }
                 }
             }
         }

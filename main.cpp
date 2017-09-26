@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include "cpuload.h"
+#include "cputemperature.h"
 #include "osproc.h"
 
 //=====================================================================================================================
@@ -22,13 +23,16 @@ int main(int argc, char *argv[])
     CpuLoad::instance()->initialize();
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("cpuLoad", CpuLoad::instance());
+    engine.rootContext()->setContextProperty("cpuTemperature", CpuTemperature::instance());
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty())
         return -1;
 
-    QObject *pRepeaterName = engine.rootObjects().first()->findChild<QObject*>("cpuLoadCpu");
-    pRepeaterName->setProperty("model", OsProc::instance()->cpuInfoProcessorCount() + 1);
+    QObject *pCpuLoadRepeater = engine.rootObjects().first()->findChild<QObject*>("cpuLoadCpu");
+    pCpuLoadRepeater->setProperty("model", OsProc::instance()->cpuInfoProcessorCount() + 1);
+    QObject *pCpuTemperatureRepeater = engine.rootObjects().first()->findChild<QObject*>("cpuTemperatureCpu");
+    pCpuTemperatureRepeater->setProperty("model", OsProc::instance()->cpuInfoCoreCount());
 
     return app.exec();
 }

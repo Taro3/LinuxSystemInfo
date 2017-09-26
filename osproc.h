@@ -21,6 +21,7 @@ public:
     static OsProc* createInstance(QObject *parent = nullptr);
     static OsProc* instance();
     int cpuInfoProcessorCount();
+    int cpuInfoCoreCount();
     QStringList loadStatFile();
     QStringList createSensorsData();
     QList<quint64> statCpu(int nIndex);
@@ -32,6 +33,8 @@ private:
     static const QString STAT_FILE_NAME;    //!< statファイル名
     QFile   *m_pcFileCpuInfo;               //!< cpuinfo用ファイルオブジェクト
     QFile   *m_pcFileStat;                  //!< stat用ファイルオブジェクト
+    int     m_nCpuLogicalCount;             //!< 論理CPU数
+    int     m_nCpuCoreCount;                //!< CPUコア数
 
     OsProc();                               // デフォルトコンストラクタはアクセス禁止
 };
