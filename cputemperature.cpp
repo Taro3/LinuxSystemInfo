@@ -1,8 +1,10 @@
 #include <QThread>
+#include <QStringList>
 
 #include "cputemperature.h"
 #include "osproc.h"
 #include "temperaturegetthread.h"
+#include "sensorsdata.h"
 
 //=====================================================================================================================
 /**
@@ -27,6 +29,9 @@ CpuTemperature::~CpuTemperature()
         delete *it;
         *it = nullptr;
     }
+
+    delete m_pcSendorsData;
+    m_pcSendorsData = nullptr;
 }
 
 //=====================================================================================================================
@@ -35,13 +40,16 @@ CpuTemperature::~CpuTemperature()
  */
 void CpuTemperature::startGetCpuTemperature()
 {
+    // 温度データ読込 & 設定
+    m_pcSendorsData->setSecsorsData(OsProc::instance()->createSensorsData());
+
     for (QList<TemperatureGetThread*>::Iterator it = m_clstThreadl.begin(); it != m_clstThreadl.end(); ++it) {
         QMetaObject::invokeMethod(*it, "doWork");
     }
 }
 
 //=====================================================================================================================
-void CpuTemperature::getTemperatureFinished(const int nCpuIndex, const quint64 nTemperature)
+void CpuTemperature::getTemperatureFinished(const int nCpuIndex, const qreal nTemperature)
 {
     emit temperatureUpdated(nCpuIndex, nTemperature);
 }
@@ -50,12 +58,18 @@ void CpuTemperature::getTemperatureFinished(const int nCpuIndex, const quint64 n
 /**
  * @brief CpuTemperature::CpuTemperature
  */
-CpuTemperature::CpuTemperature() : QObject()
-  , m_clstThreadl(QList<TemperatureGetThread*>())
+CpuTemperature::CpuTemperature()
+    : QObject()
+    , m_pcSendorsData(nullptr)
+    , m_clstThreadl(QList<TemperatureGetThread*>())
 {
-    for (int i = 0; i < OsProc::instance()->cpuInfoCoreCount(); ++i) {
-        TemperatureGetThread* pGetThread = new TemperatureGetThread(i);
-        connect(pGetThread, SIGNAL(finished(int,quint64)), SLOT(getTemperatureFinished(int,quint64)));
+    // CPU温度データ保持オブジェクト生成
+    m_pcSendorsData = new SensorsData(this);
+
+    // CPU温度データ取得オブスレッド生成
+    for (int i = 0; i < OsProc::instance()->cpuInfoCoreCount() + 1; ++i) {
+        TemperatureGetThread* pGetThread = new TemperatureGetThread(m_pcSendorsData, i);
+        connect(pGetThread, SIGNAL(finished(int,qreal)), SLOT(getTemperatureFinished(int,qreal)));
         QThread *pWorkerThread = new QThread;
         pGetThread->moveToThread(pWorkerThread);
         pWorkerThread->start();

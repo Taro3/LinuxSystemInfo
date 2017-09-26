@@ -4,6 +4,7 @@
 #include <QObject>
 
 class TemperatureGetThread;
+class SensorsData;
 
 //=====================================================================================================================
 /**
@@ -18,21 +19,23 @@ class CpuTemperature : public QObject
 public:
     static CpuTemperature* instance();
     virtual ~CpuTemperature();
-    CpuTemperature(const CpuTemperature&) = delete;                // コピーコンストラクタ無効化
+    CpuTemperature(const CpuTemperature&) = delete;                 // コピーコンストラクタ無効化
     CpuTemperature& operator =(const CpuTemperature &) = delete;    // 代入演算子無効化
     CpuTemperature(CpuTemperature &&) = delete;                     // 右辺値参照コピーコンストラクタ無効化
     CpuTemperature& operator =(CpuTemperature &&) = delete;         // 右辺値参照代入演算子無効化
     Q_INVOKABLE void startGetCpuTemperature();
 
 signals:
-    void temperatureUpdated(const int nCpuIndex, const quint64 nTemperature);
+    void temperatureUpdated(const int nCpuIndex, const qreal nTemperature);
 
 public slots:
-    void getTemperatureFinished(const int nCpuIndex, const quint64 nTemperature);
+    void getTemperatureFinished(const int nCpuIndex, const qreal nTemperature);
 
 private:
+    SensorsData                     *m_pcSendorsData;
+    QList <TemperatureGetThread*>   m_clstThreadl;
+
     CpuTemperature();
-    QList <TemperatureGetThread*> m_clstThreadl;
 };
 
 #endif // CPUTEMPERATURE_H

@@ -26,7 +26,7 @@ ApplicationWindow {
         target: cpuTemperature
         onTemperatureUpdated: {
             var box = repeaterCpuTemerate.itemAt(nCpuIndex).children[1]
-            box.value = nTemperature / 1000
+            box.value = nTemperature
         }
     }
 
@@ -87,7 +87,7 @@ ApplicationWindow {
                     Text {
                         width: 64
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Core") + index + qsTr(": ")
+                        text: index == 0 ? qsTr("Overall: ") : qsTr("Core") + (index - 1) + qsTr(": ")
                     }
 
                     TemperatureBox {

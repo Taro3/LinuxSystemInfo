@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+class SensorsData;
+
 //=====================================================================================================================
 /**
  * @brief   The TemperatureGetThread class
@@ -13,17 +15,18 @@ class TemperatureGetThread : public QObject
     Q_OBJECT
 
 public:
-    explicit TemperatureGetThread(const int nCpuIndex);
+    explicit TemperatureGetThread(SensorsData *pSensorsData, const int nCpuIndex);
     void quit();
 
 signals:
-    void finished(const int nCpuIndex, const quint64 nCpuTemperature);
+    void finished(const int nCpuIndex, const qreal nCpuTemperature);
 
 public slots:
     void doWork();
 
 private:
-    int m_nCpuIndex;
+    int         m_nCpuIndex;
+    SensorsData *m_pcSensorsData;
 };
 
 #endif // TEMPERATUREGETTHREAD_H

@@ -20,14 +20,16 @@ SOURCES += main.cpp \
     loaddata.cpp \
     loadgetthread.cpp \
     cputemperature.cpp \
-    temperaturegetthread.cpp
+    temperaturegetthread.cpp \
+    sensorsdata.cpp
 
 HEADERS += cpuload.h \
     osproc.h \
     loaddata.h \
     loadgetthread.h \
     cputemperature.h \
-    temperaturegetthread.h
+    temperaturegetthread.h \
+    sensorsdata.h
 
 RESOURCES += qml.qrc
 

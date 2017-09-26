@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     QObject *pCpuLoadRepeater = engine.rootObjects().first()->findChild<QObject*>("cpuLoadCpu");
     pCpuLoadRepeater->setProperty("model", OsProc::instance()->cpuInfoProcessorCount() + 1);
     QObject *pCpuTemperatureRepeater = engine.rootObjects().first()->findChild<QObject*>("cpuTemperatureCpu");
-    pCpuTemperatureRepeater->setProperty("model", OsProc::instance()->cpuInfoCoreCount());
+    pCpuTemperatureRepeater->setProperty("model", OsProc::instance()->cpuInfoCoreCount() + 1);
 
     return app.exec();
 }
