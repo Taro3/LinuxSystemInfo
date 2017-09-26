@@ -1,6 +1,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QStringList>
+#include <QProcess>
 
 #include "osproc.h"
 
@@ -14,7 +15,7 @@ const QString OsProc::STAT_FILE_NAME    = "stat";
  * @param[in]   parent  親オブジェクトポインタ
  * @return      なし
  */
-OsProc::OsProc(QObject *parent) : QObject(parent)
+OsProc::OsProc() : QObject()
   , m_pcFileCpuInfo(nullptr)
   , m_pcFileStat(nullptr)
 {
@@ -22,9 +23,21 @@ OsProc::OsProc(QObject *parent) : QObject(parent)
 
 //=====================================================================================================================
 /**
- * @brief OsProc::~OsProc
+ * @brief   OsProc::instance
+ *          インスタンス取得
+ * @return  インスタンスポインタ
+ */
+OsProc *OsProc::instance()
+{
+    static OsProc cOsProc;
+
+    return &cOsProc;
+}
+
+//=====================================================================================================================
+/**
+ * @brief   OsProc::~OsProc
  *          デストラクタ
- * @return  なし
  */
 OsProc::~OsProc()
 {
@@ -132,6 +145,33 @@ QStringList OsProc::loadStatFile()
     m_pcFileStat->close();
 
     return lstLoad;
+}
+
+//=====================================================================================================================
+/**
+ * @brief   OsProc::createSensorsData
+ *          sensors コマンドを実行しコア温度データ文字列を取得する
+ * @return  コア温度データテキスト
+ * @note    失敗した場合は空の QStringList を返す
+ */
+QStringList OsProc::createSensorsData()
+{
+    static const QString SENSORS_COMMAND = "sensors";
+
+    QProcess cProcess;
+    QStringList lstSensors;
+
+    cProcess.start(SENSORS_COMMAND);
+    cProcess.waitForFinished();
+
+    QString strLine;
+
+    while (!(strLine = cProcess.readLine()).isEmpty())
+    {
+        lstSensors.append(strLine);
+    }
+
+    return lstSensors;
 }
 
 //=====================================================================================================================

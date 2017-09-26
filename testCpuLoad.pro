@@ -18,12 +18,16 @@ SOURCES += main.cpp \
     cpuload.cpp \
     osproc.cpp \
     loaddata.cpp \
-    loadgetthread.cpp
+    loadgetthread.cpp \
+    sensorsdata.cpp \
+    cputemperate.cpp
 
 HEADERS += cpuload.h \
     osproc.h \
     loaddata.h \
-    loadgetthread.h
+    loadgetthread.h \
+    sensorsdata.h \
+    cputemperate.h
 
 RESOURCES += qml.qrc
 
@@ -37,3 +41,6 @@ QML_DESIGNER_IMPORT_PATH =
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    testmodel.qmodel

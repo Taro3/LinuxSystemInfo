@@ -13,16 +13,20 @@ class LoadGetThread;
 /**
  * @brief   The CpuLoad class
  *          CPU使用率取得用クラス
+ * @note    シングルトン実装
  */
 class CpuLoad : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit CpuLoad(QObject *parent = nullptr);
+    static CpuLoad* instance();
+    CpuLoad(const CpuLoad &) = delete;                // コピーコンストラクタ無効化
+    CpuLoad& operator =(const CpuLoad &) = delete;    // 代入演算子無効化
+    CpuLoad(CpuLoad &&) = delete;                     // 右辺値参照コピーコンストラクタ無効化
+    CpuLoad& operator =(CpuLoad &&) = delete;         // 右辺値参照代入演算子無効化
     virtual ~CpuLoad();
     bool initialize();
-//    Q_INVOKABLE QList<qreal> cpuLoad();
     //=================================================================================================================
     /**
      * @brief   cpuCount
@@ -65,18 +69,13 @@ public slots:
     void getLoadFinished(const int nCpuIndex, const qreal load);
 
 private:
-//    typedef struct {
-//        clock_t         prevClock;              //!< 前回取得時刻
-//        QList<quint64>  lstInfo;                //!< 取得CPU時間
-//    } sInfoAndTime;
-
-    OsProc      *m_pcOsProc;                    //!< OsProcオブジェクト
     LoadData    *m_pcLoadData;                  //!< 負荷率テキストデータ保持オブジェクト
     int         m_nProcessorCount;              //!< 論理CPU数
     bool        m_isReady;                      //!< 初期化完了フラグ
     clock_t     m_nPrevClock;                   //!< 前回の負荷率取得時クロック
     QList<LoadGetThread*>   m_lstGetThread;     //!< 負荷率取得スレッドリスト
-//    QVector<sInfoAndTime> m_vecCpuInfo;         //!< CPU情報
+
+    CpuLoad();
 };
 
 #endif // CPULOAD_H

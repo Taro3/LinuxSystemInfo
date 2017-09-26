@@ -10,13 +10,24 @@
 
 //=====================================================================================================================
 /**
+ * @brief CpuLoad::instance
+ * @return
+ */
+CpuLoad *CpuLoad::instance()
+{
+    static CpuLoad cpuLoad;
+
+    return &cpuLoad;
+}
+
+//=====================================================================================================================
+/**
  * @brief       CpuLoad::CpuLoad
  *              コンストラクタ
  * @param[in]   parent  親オブジェクトポインタ
  * @return      なし
  */
-CpuLoad::CpuLoad(QObject *parent) : QObject(parent)
-  , m_pcOsProc(nullptr)
+CpuLoad::CpuLoad() : QObject()
   , m_pcLoadData(nullptr)
   , m_nProcessorCount(0)
   , m_isReady(false)
@@ -41,8 +52,6 @@ CpuLoad::~CpuLoad()
 
     delete m_pcLoadData;
     m_pcLoadData = nullptr;
-    delete m_pcOsProc;
-    m_pcOsProc = nullptr;
 }
 
 //=====================================================================================================================
@@ -61,8 +70,7 @@ bool CpuLoad::initialize()
     }
 
     m_pcLoadData = new LoadData(this);
-    m_pcOsProc = new OsProc(this);
-    m_nProcessorCount = m_pcOsProc->cpuInfoProcessorCount();
+    m_nProcessorCount = OsProc::instance()->cpuInfoProcessorCount();
 
     if (m_nProcessorCount == 0)
     {
@@ -86,49 +94,6 @@ bool CpuLoad::initialize()
     return true;
 }
 
-////=====================================================================================================================
-///**
-// * @brief   CpuLoad::cpuLoad
-// *          CPU処理時間取得
-// * @return  処理時間(全体1 +  論理CPU数)
-// * @note    QMLから呼び出し可能
-// */
-//QList<qreal> CpuLoad::cpuLoad()
-//{
-//    QList<qreal> allLoads;
-
-//    if (!m_isReady)
-//    {
-//        qDebug() << QString(__func__) + " (" + __LINE__ + "): invalid parameter.";
-
-//        return allLoads;
-//    }
-
-//    QList<QList<quint64> > currentStats = m_pcOsProc->statCpus();
-//    clock_t now = ::times(nullptr);
-
-//    for (int i = 0; i < currentStats.count(); ++i)
-//    {
-//        quint64 currentLoad = currentStats[i][0] + currentStats[i][1] + currentStats[i][2];
-//        quint64 prevLoad
-//                = m_vecCpuInfo[i].lstInfo[0] + m_vecCpuInfo[i].lstInfo[1] + m_vecCpuInfo[i].lstInfo[2];
-//        qreal load = static_cast<qreal>(currentLoad - prevLoad) / (now - m_vecCpuInfo[i].prevClock) * 100.0f;
-
-//        if (i == 0)
-//        {
-//            load /= m_nProcessorCount;
-//        }
-
-//        allLoads << load;
-//        sInfoAndTime sIat;
-//        sIat.lstInfo = currentStats[i];
-//        sIat.prevClock = now;
-//        m_vecCpuInfo.replace(i, sIat);
-//    }
-
-//    return allLoads;
-//}
-
 //=====================================================================================================================
 /**
  * @brief   CpuLoad::startGetCpuLoad
@@ -137,7 +102,7 @@ bool CpuLoad::initialize()
  */
 void CpuLoad::startGetCpuLoad()
 {
-    QStringList lstLoadFile = m_pcOsProc->loadStatFile();
+    QStringList lstLoadFile = OsProc::instance()->loadStatFile();
     m_pcLoadData->setLoadData(lstLoadFile);
 
     quint64 nInterval = 0;

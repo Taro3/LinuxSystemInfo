@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include "cpuload.h"
+#include "osproc.h"
 
 //=====================================================================================================================
 /**
@@ -18,17 +19,16 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
-    CpuLoad cpuLoad;
-    cpuLoad.initialize();
+    CpuLoad::instance()->initialize();
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("cpuLoad", &cpuLoad);
+    engine.rootContext()->setContextProperty("cpuLoad", CpuLoad::instance());
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty())
         return -1;
 
     QObject *pRepeaterName = engine.rootObjects().first()->findChild<QObject*>("cpuLoadCpu");
-    pRepeaterName->setProperty("model", cpuLoad.cpuCount() + 1);
+    pRepeaterName->setProperty("model", OsProc::instance()->cpuInfoProcessorCount() + 1);
 
     return app.exec();
 }
