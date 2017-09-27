@@ -17,19 +17,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp \
     cpuload.cpp \
     osproc.cpp \
-    loaddata.cpp \
     loadgetthread.cpp \
     cputemperature.cpp \
     temperaturegetthread.cpp \
-    sensorsdata.cpp
+    sensorsdata.cpp \
+    statdata.cpp \
+    cpuinfodata.cpp
 
 HEADERS += cpuload.h \
     osproc.h \
-    loaddata.h \
     loadgetthread.h \
     cputemperature.h \
     temperaturegetthread.h \
-    sensorsdata.h
+    sensorsdata.h \
+    statdata.h \
+    cpuinfodata.h
 
 RESOURCES += qml.qrc
 

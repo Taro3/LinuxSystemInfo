@@ -6,6 +6,7 @@
 #include "cpuload.h"
 #include "cputemperature.h"
 #include "osproc.h"
+#include "cpuinfodata.h"
 
 //=====================================================================================================================
 /**
@@ -30,9 +31,9 @@ int main(int argc, char *argv[])
         return -1;
 
     QObject *pCpuLoadRepeater = engine.rootObjects().first()->findChild<QObject*>("cpuLoadCpu");
-    pCpuLoadRepeater->setProperty("model", OsProc::instance()->cpuInfoProcessorCount() + 1);
+    pCpuLoadRepeater->setProperty("model", CpuinfoData::instance()->processorCount() + 1);
     QObject *pCpuTemperatureRepeater = engine.rootObjects().first()->findChild<QObject*>("cpuTemperatureCpu");
-    pCpuTemperatureRepeater->setProperty("model", OsProc::instance()->cpuInfoCoreCount() + 1);
+    pCpuTemperatureRepeater->setProperty("model", CpuinfoData::instance()->coreCount() + 1);
 
     return app.exec();
 }

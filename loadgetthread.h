@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QThread>
 
-class LoadData;
+class StatData;
 
 //=====================================================================================================================
 /**
@@ -16,7 +16,7 @@ class LoadGetThread : public QObject
     Q_OBJECT
 
 public:
-    explicit LoadGetThread(LoadData * const pLoadData, const int nCpuId, const int nTotalCpuCount
+    explicit LoadGetThread(StatData * const pLoadData, const int nCpuId, const int nTotalCpuCount
                            , QObject *parent = nullptr);
     //=================================================================================================================
     /**
@@ -49,7 +49,7 @@ public slots:
 private:
     int         m_nCpuId;           //!< CPU ID
     int         m_nTotalCpuCount;   //!< 総論理CPU数
-    LoadData    *m_pcLoadData;      //!< 負荷率データテキスト保持オブジェクト
+    StatData    *m_pcLoadData;      //!< 負荷率データテキスト保持オブジェクト
     quint64     m_nPrevLoad;        //!< 前回の負荷値
 };
 

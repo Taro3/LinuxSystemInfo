@@ -7,6 +7,7 @@
 #include "temperaturegetthread.h"
 #include "sensorsdata.h"
 #include "osproc.h"
+#include "cpuinfodata.h"
 
 //=====================================================================================================================
 /**
@@ -71,7 +72,7 @@ void TemperatureGetThread::doWork()
         // 各Core
         int nIndex = nPackageIndex;
 
-        for (int i = 0; i < OsProc::instance()->cpuInfoCoreCount(); ++i) {
+        for (int i = 0; i < CpuinfoData::instance()->processorCount(); ++i) {
             nIndex = lstData.indexOf(QRegExp(STR_CORE.arg(i), Qt::CaseInsensitive));
 
             if (nIndex < 0) {

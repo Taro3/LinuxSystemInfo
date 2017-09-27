@@ -3,7 +3,7 @@
 #include <QStringList>
 
 #include "loadgetthread.h"
-#include "loaddata.h"
+#include "statdata.h"
 
 //=====================================================================================================================
 /**
@@ -16,7 +16,7 @@
  * @param[in]   parent      親オブジェクトポインタ(QThreadで別スレッド動作させるため nullptr を指定すること
  * @return      なし
  */
-LoadGetThread::LoadGetThread(LoadData * const pLoadData, const int nCpuId, const int nTotalCpuCount, QObject *parent)
+LoadGetThread::LoadGetThread(StatData * const pLoadData, const int nCpuId, const int nTotalCpuCount, QObject *parent)
     : QObject(parent)
     , m_nCpuId(0)
     , m_nTotalCpuCount(0)

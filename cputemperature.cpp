@@ -5,6 +5,7 @@
 #include "osproc.h"
 #include "temperaturegetthread.h"
 #include "sensorsdata.h"
+#include "cpuinfodata.h"
 
 //=====================================================================================================================
 /**
@@ -67,7 +68,7 @@ CpuTemperature::CpuTemperature()
     m_pcSendorsData = new SensorsData(this);
 
     // CPU温度データ取得オブスレッド生成
-    for (int i = 0; i < OsProc::instance()->cpuInfoCoreCount() + 1; ++i) {
+    for (int i = 0; i < CpuinfoData::instance()->processorCount() + 1; ++i) {
         TemperatureGetThread* pGetThread = new TemperatureGetThread(m_pcSendorsData, i);
         connect(pGetThread, SIGNAL(finished(int,qreal)), SLOT(getTemperatureFinished(int,qreal)));
         QThread *pWorkerThread = new QThread;

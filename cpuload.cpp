@@ -5,8 +5,9 @@
 
 #include "cpuload.h"
 #include "osproc.h"
-#include "loaddata.h"
+#include "statdata.h"
 #include "loadgetthread.h"
+#include "cpuinfodata.h"
 
 //=====================================================================================================================
 /**
@@ -67,8 +68,8 @@ bool CpuLoad::initialize()
         return true;
     }
 
-    m_pcLoadData      = new LoadData(this);
-    m_nProcessorCount = OsProc::instance()->cpuInfoProcessorCount();
+    m_pcLoadData      = new StatData(this);
+    m_nProcessorCount = CpuinfoData::instance()->processorCount();
 
     if (m_nProcessorCount == 0) {
         qDebug() << QString(__func__) + " (" + __LINE__ + "): can't get cpu count.";

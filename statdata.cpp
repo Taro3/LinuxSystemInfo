@@ -2,7 +2,7 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
-#include "loaddata.h"
+#include "statdata.h"
 
 //=====================================================================================================================
 /**
@@ -11,7 +11,7 @@
  * @param[in]   parent  親オブジェクトポインタ
  * @return      なし
  */
-LoadData::LoadData(QObject *parent)
+StatData::StatData(QObject *parent)
     : QObject(parent)
     , m_pcLock(nullptr)
     , m_plstLoadData(nullptr)
@@ -25,7 +25,7 @@ LoadData::LoadData(QObject *parent)
  * @brief   LoadData::~LoadData
  *          デストラクタ
  */
-LoadData::~LoadData()
+StatData::~StatData()
 {
     delete m_pcLock;       m_pcLock       = nullptr;
     delete m_plstLoadData; m_plstLoadData = nullptr;
@@ -38,7 +38,7 @@ LoadData::~LoadData()
  * @param[in]   lst 負荷率データテキスト
  * @return      なし
  */
-void LoadData::setLoadData(const QStringList &lst)
+void StatData::setLoadData(const QStringList &lst)
 {
     QWriteLocker wLock(m_pcLock);
 

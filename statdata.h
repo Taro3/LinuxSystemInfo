@@ -1,5 +1,5 @@
-#ifndef LOADDATA_H
-#define LOADDATA_H
+#ifndef STATDATA_H
+#define STATDATA_H
 
 #include <QObject>
 #include <QReadWriteLock>
@@ -7,16 +7,16 @@
 
 //=====================================================================================================================
 /**
- * @brief   The LoadData class
+ * @brief The StatData class
  *          CPU負荷率データ保持クラス
  * @note    複数のスレッドからのアクセスに対応する必要がある
  */
-class LoadData : public QObject
+class StatData : public QObject
 {
     Q_OBJECT
 public:
-    explicit LoadData(QObject *parent = nullptr);
-    ~LoadData();
+    explicit StatData(QObject *parent = nullptr);
+    ~StatData();
     void setLoadData(const QStringList &lst);
     //=================================================================================================================
     /**
@@ -39,4 +39,4 @@ private:
     QStringList     *m_plstLoadData;    //!< 負荷率データテキスト
 };
 
-#endif // LOADDATA_H
+#endif // STATDATA_H
