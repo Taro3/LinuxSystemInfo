@@ -36,11 +36,10 @@ LoadGetThread::LoadGetThread(LoadData * const pLoadData, const int nCpuId, const
  */
 void LoadGetThread::doWork(quint64 nInterval)
 {
-    QStringList lstLoad = m_pcLoadData->loadData();
-    QString strCpuName = "^cpu";
+    QStringList lstLoad    = m_pcLoadData->loadData();
+    QString     strCpuName = "^cpu";
 
-    if (m_nCpuId != 0)
-    {
+    if (m_nCpuId != 0) {
         strCpuName += QString::number(m_nCpuId - 1);
     }
 
@@ -48,34 +47,27 @@ void LoadGetThread::doWork(quint64 nInterval)
     int nIndex = lstLoad.indexOf(QRegExp(strCpuName, Qt::CaseInsensitive));
     qreal nCalcLoad = 0.0f;
 
-    if (nIndex != -1)
-    {
+    if (nIndex != -1) {
         QString strLine = lstLoad.at(nIndex);
         QStringList lstToken = strLine.split(QRegExp("\\s"));
 
-        if (lstToken.length() >= 4)
-        {
+        if (lstToken.length() >= 4) {
             quint64 nNowLoad = lstToken[1].toULongLong() + lstToken[2].toULongLong() + lstToken[3].toULongLong();
 
-            if (nInterval != 0)
-            {
+            if (nInterval != 0) {
                 nCalcLoad = static_cast<qreal>(nNowLoad - m_nPrevLoad) / nInterval * 100.0f;
             }
 
-            if (m_nCpuId == 0)
-            {
+            if (m_nCpuId == 0) {
                 nCalcLoad /= m_nTotalCpuCount;
             }
 
             m_nPrevLoad = nNowLoad;
 
-            if (nInterval != 0)
-            {
+            if (nInterval != 0) {
                 emit finished(m_nCpuId, nCalcLoad);
             }
-        }
-        else
-        {
+        } else {
             qDebug() << "stat data failed.";
         }
     }

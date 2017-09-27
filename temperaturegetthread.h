@@ -25,8 +25,8 @@ public slots:
     void doWork();
 
 private:
-    int         m_nCpuIndex;
-    SensorsData *m_pcSensorsData;
+    int         m_nCpuIndex;        //!< CPUインデックス
+    SensorsData *m_pcSensorsData;   //!< CPU温度データ
 };
 
 #endif // TEMPERATUREGETTHREAD_H

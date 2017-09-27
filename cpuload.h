@@ -69,10 +69,10 @@ public slots:
     void getLoadFinished(const int nCpuIndex, const qreal load);
 
 private:
-    LoadData    *m_pcLoadData;                  //!< 負荷率テキストデータ保持オブジェクト
-    int         m_nProcessorCount;              //!< 論理CPU数
-    bool        m_isReady;                      //!< 初期化完了フラグ
-    clock_t     m_nPrevClock;                   //!< 前回の負荷率取得時クロック
+    LoadData                *m_pcLoadData;      //!< 負荷率テキストデータ保持オブジェクト
+    int                     m_nProcessorCount;  //!< 論理CPU数
+    bool                    m_isReady;          //!< 初期化完了フラグ
+    clock_t                 m_nPrevClock;       //!< 前回の負荷率取得時クロック
     QList<LoadGetThread*>   m_lstGetThread;     //!< 負荷率取得スレッドリスト
 
     CpuLoad();

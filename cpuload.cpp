@@ -43,8 +43,7 @@ CpuLoad::CpuLoad() : QObject()
  */
 CpuLoad::~CpuLoad()
 {
-    for (int i = 0; i < m_lstGetThread.count(); ++i)
-    {
+    for (int i = 0; i < m_lstGetThread.count(); ++i) {
         m_lstGetThread.at(i)->quit();
         delete m_lstGetThread.at(i);
         m_lstGetThread.replace(i, nullptr);
@@ -64,29 +63,27 @@ CpuLoad::~CpuLoad()
  */
 bool CpuLoad::initialize()
 {
-    if (m_isReady)
-    {
+    if (m_isReady) {
         return true;
     }
 
-    m_pcLoadData = new LoadData(this);
+    m_pcLoadData      = new LoadData(this);
     m_nProcessorCount = OsProc::instance()->cpuInfoProcessorCount();
 
-    if (m_nProcessorCount == 0)
-    {
+    if (m_nProcessorCount == 0) {
         qDebug() << QString(__func__) + " (" + __LINE__ + "): can't get cpu count.";
 
         return false;
     }
 
-    for (int i = 0; i < m_nProcessorCount + 1; ++i)
-    {
+    for (int i = 0; i < m_nProcessorCount + 1; ++i) {
         LoadGetThread *pGetThread = new LoadGetThread(m_pcLoadData, i, m_nProcessorCount);
         m_lstGetThread.append(pGetThread);
         connect(pGetThread, SIGNAL(finished(int,qreal)), SLOT(getLoadFinished(int,qreal)));
-        QThread *pThread = new QThread(this);
-        pGetThread->moveToThread(pThread);
-        pThread->start();
+//        QThread *pThread = new QThread(this);
+        pGetThread->moveToThread(new QThread(this));
+//        pThread->start();
+        pGetThread->thread()->start();
     }
 
     m_isReady = true;
@@ -106,21 +103,17 @@ void CpuLoad::startGetCpuLoad()
     m_pcLoadData->setLoadData(lstLoadFile);
 
     quint64 nInterval = 0;
-    if (m_nPrevClock == 0)
-    {
+
+    if (m_nPrevClock == 0) {
         m_nPrevClock = ::times(nullptr);
-    }
-    else
-    {
+    } else {
         clock_t nNow = ::times(nullptr);
         nInterval = nNow - m_nPrevClock;
         m_nPrevClock = nNow;
     }
 
-    for (int i = 0; i < m_lstGetThread.count(); ++i)
-    {
-        if (QMetaObject::invokeMethod(m_lstGetThread.at(i), "doWork", Q_ARG(quint64, nInterval)) == false)
-        {
+    for (int i = 0; i < m_lstGetThread.count(); ++i) {
+        if (QMetaObject::invokeMethod(m_lstGetThread.at(i), "doWork", Q_ARG(quint64, nInterval)) == false) {
             qDebug() << "invokeMethod failed.";
         }
     }

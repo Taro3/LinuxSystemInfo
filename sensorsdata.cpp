@@ -14,7 +14,7 @@ SensorsData::SensorsData(QObject *parent)
     , m_pcLock(nullptr)
     , m_pclstData(nullptr)
 {
-    m_pcLock = new QReadWriteLock;
+    m_pcLock    = new QReadWriteLock;
     m_pclstData = new QStringList;
 }
 
@@ -24,10 +24,8 @@ SensorsData::SensorsData(QObject *parent)
  */
 SensorsData::~SensorsData()
 {
-    delete m_pcLock;
-    m_pcLock = nullptr;
-    delete m_pclstData;
-    m_pclstData = nullptr;
+    delete m_pcLock;    m_pcLock    = nullptr;
+    delete m_pclstData; m_pclstData = nullptr;
 }
 
 //=====================================================================================================================
@@ -49,5 +47,6 @@ void SensorsData::setSecsorsData(const QStringList &lstSensorData)
 QStringList SensorsData::sensorsData() const
 {
     QReadLocker cLock(m_pcLock);
+
     return *m_pclstData;
 }

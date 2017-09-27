@@ -24,8 +24,8 @@ signals:
 public slots:
 
 private:
-    QReadWriteLock  *m_pcLock;
-    QStringList     *m_pclstData;
+    QReadWriteLock  *m_pcLock;      //!< 排他書利用ロックオブジェクト
+    QStringList     *m_pclstData;   //!< CPU温度データテキスト
 };
 
 #endif // SENSORSDATA_H

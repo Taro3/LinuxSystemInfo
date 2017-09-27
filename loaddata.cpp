@@ -16,7 +16,7 @@ LoadData::LoadData(QObject *parent)
     , m_pcLock(nullptr)
     , m_plstLoadData(nullptr)
 {
-    m_pcLock = new QReadWriteLock;
+    m_pcLock       = new QReadWriteLock;
     m_plstLoadData = new QStringList;
 }
 
@@ -27,10 +27,8 @@ LoadData::LoadData(QObject *parent)
  */
 LoadData::~LoadData()
 {
-    delete m_pcLock;
-    m_pcLock = nullptr;
-    delete m_plstLoadData;
-    m_plstLoadData = nullptr;
+    delete m_pcLock;       m_pcLock       = nullptr;
+    delete m_plstLoadData; m_plstLoadData = nullptr;
 }
 
 //=====================================================================================================================

@@ -43,21 +43,26 @@ void TemperatureGetThread::doWork()
 
     // Package0を検索
     int nPackageIndex = lstData.indexOf(QRegExp(STR_PACKAGE_ID, Qt::CaseInsensitive));
+
     if (nPackageIndex < 0) {
         qDebug() << "Package line not found.";
 
         return;
     }
+
     qreal nTemperature = 0.0f;
+
     if (m_nCpuIndex == 0) {
         // CPU全体
         QString strLine = lstData.at(nPackageIndex);
         QStringList lstLine = strLine.split(':');
+
         if (lstLine.count() < 2) {
             qDebug() << "Invalid 'Package' line.";
 
             return;
         }
+
         QString strTemp = lstLine.at(1);
 //        strTemp = strTemp.trimmed();
         QTextStream stream(&strTemp);
@@ -65,20 +70,25 @@ void TemperatureGetThread::doWork()
     } else {
         // 各Core
         int nIndex = nPackageIndex;
+
         for (int i = 0; i < OsProc::instance()->cpuInfoCoreCount(); ++i) {
             nIndex = lstData.indexOf(QRegExp(STR_CORE.arg(i), Qt::CaseInsensitive));
+
             if (nIndex < 0) {
                 qDebug() << QString("Core ") + i + "data not found.";
 
                 return;
             }
+
             QString strLine = lstData.at(nIndex);
             QStringList lstLine = strLine.split(':');
+
             if (lstLine.count() < 2) {
                 qDebug() << "Invalid 'Core' line.";
 
                 return;
             }
+
             QString strTemp = lstLine.at(1);
 //            strTemp = strTemp.trimmed();
             QTextStream stream(&strTemp);
