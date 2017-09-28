@@ -1,4 +1,5 @@
 *.user
 *.cppcheck
 /*build-dir
+/cppcheck*
 
